@@ -13,7 +13,7 @@ public class ModItems {
             DeferredRegister.create(ForgeRegistries.ITEMS, CoolMod.MOD_ID);
 
     public static final RegistryObject<Item> TRASH = ITEMS.register("trash",
-            () -> new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+            () -> new Item(new Item.Properties().tab(ModCreativeModeTab.COOLMOD_TAB)));
 
 
     public static void register(IEventBus eventBus){
