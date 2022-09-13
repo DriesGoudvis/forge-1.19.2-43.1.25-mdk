@@ -7,7 +7,7 @@ public class ModCreativeModeTab {
     public static final CreativeModeTab COOLMOD_TAB = new CreativeModeTab("coolmodtab") {
         @Override
         public ItemStack makeIcon() {
-            return new ItemStack(ModItems.TRASH.get());
+            return new ItemStack(ModItems.RADIOTRASH.get());
         }
     };
 }

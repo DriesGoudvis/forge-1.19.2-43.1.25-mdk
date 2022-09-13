@@ -12,7 +12,7 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, CoolMod.MOD_ID);
 
-    public static final RegistryObject<Item> TRASH = ITEMS.register("trash",
+    public static final RegistryObject<Item> RADIOTRASH = ITEMS.register("radiotrash",
             () -> new Item(new Item.Properties().tab(ModCreativeModeTab.COOLMOD_TAB)));
 
 
