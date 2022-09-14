@@ -23,8 +23,13 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, CoolMod.MOD_ID);
 
     public static final RegistryObject<Block> COMPRESSED_TRASH = registerBlock("compressed_trash",
+            () -> new Block(BlockBehaviour.Properties.of(Material.HEAVY_METAL)
+                    .strength(30f).requiresCorrectToolForDrops()),
+                    ModCreativeModeTab.COOLMOD_TAB);
+
+    public static final RegistryObject<Block> RADIOTRASHBLOCK = registerBlock("radiotrashblock",
             () -> new DropExperienceBlock(BlockBehaviour.Properties.of(Material.HEAVY_METAL)
-                    .strength(30f).requiresCorrectToolForDrops(),
+                    .strength(6f).requiresCorrectToolForDrops(),
                     UniformInt.of(100,500)), ModCreativeModeTab.COOLMOD_TAB);
 
 

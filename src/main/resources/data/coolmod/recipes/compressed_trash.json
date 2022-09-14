@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "coolmod:radiotrash"
+    }
+  },
+  "result": {
+    "count": 2,
+    "item": "coolmod:compressed_trash"
+  }
+}
