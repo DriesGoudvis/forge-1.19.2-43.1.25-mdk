@@ -1,6 +1,7 @@
 package net.dries008.coolmod.block;
 
 import net.dries008.coolmod.CoolMod;
+import net.dries008.coolmod.block.custom.LaucherBlock;
 import net.dries008.coolmod.item.ModCreativeModeTab;
 import net.dries008.coolmod.item.ModItems;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -31,6 +32,10 @@ public class ModBlocks {
             () -> new DropExperienceBlock(BlockBehaviour.Properties.of(Material.HEAVY_METAL)
                     .strength(6f).requiresCorrectToolForDrops(),
                     UniformInt.of(100,500)), ModCreativeModeTab.COOLMOD_TAB);
+
+    public static final RegistryObject<Block> JUMPBLOCK = registerBlock("jumpblock",
+            () -> new LaucherBlock(BlockBehaviour.Properties.of(Material.HEAVY_METAL)
+                    .strength(6f).requiresCorrectToolForDrops()), ModCreativeModeTab.COOLMOD_TAB);
 
 
 
