@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layers": "coolmod:item/eightball"
+    "layer0": "coolmod:item/eightball"
   }
 }

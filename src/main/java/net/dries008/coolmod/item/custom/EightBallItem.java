@@ -13,7 +13,7 @@ public class EightBallItem extends Item {
     public EightBallItem(Properties properties) {
         super(properties);
     }
-
+    String[] a = {"You are trash!", "Did you even try to be good or were you born like this?","If there was a competition for biggest losers, you would be second.","If I had to jump from your ego to your skills I would die from starvation before arriving."};
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if(!level.isClientSide() && hand == InteractionHand.MAIN_HAND){
@@ -26,10 +26,12 @@ public class EightBallItem extends Item {
     }
 
     private void outputRandomNumber(Player player){
-        player.sendSystemMessage(Component.literal("Your number is "+ getRandomNumber()));
+        player.sendSystemMessage(Component.literal(getRandomString()));
     }
 
-    private int getRandomNumber(){
-        return RandomSource.createNewThreadLocalInstance().nextInt(10);
+    private String getRandomString(){
+
+        int b = RandomSource.createNewThreadLocalInstance().nextInt(a.length);
+        return a[b];
     }
 }
