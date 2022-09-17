@@ -22,20 +22,11 @@ public class LaucherBlock extends Block {
         super(properties);
     }
 
-    @Override
-    public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player,
-                                 InteractionHand hand, BlockHitResult hitResult) {
-        if(level.isClientSide && hand == InteractionHand.MAIN_HAND){
-            player.sendSystemMessage(Component.literal("lol"));
-        }
-
-        return super.use(blockState, level, blockPos, player, hand, hitResult);
-    }
 
     @Override
     public void stepOn(Level level, BlockPos blockPos, BlockState blockState, Entity entity) {
         if(entity instanceof LivingEntity livingEntity){
-    livingEntity.addEffect(new MobEffectInstance(MobEffects.JUMP, 200));
+    livingEntity.addEffect(new MobEffectInstance(MobEffects.JUMP, 20));
         }
 
 

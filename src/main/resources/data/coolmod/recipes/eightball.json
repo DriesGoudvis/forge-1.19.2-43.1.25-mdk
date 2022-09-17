@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "igi",
+    "gtg",
+    "igi"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:ink_sac"
+    },
+    "g": {
+      "item": "minecraft:iron_ingot"
+    },
+    "t": {
+      "item": "coolmod:radiotrash"
+    }
+  },
+  "result": {
+    "count": 1,
+    "item": "coolmod:eightball"
+  }
+}

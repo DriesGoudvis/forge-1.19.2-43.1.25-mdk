@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "coolmod:radiotrashblock"
+    "coolmod:radiotrashblock",
+    "coolmod:jumpblock"
   ]
 }
