@@ -2,6 +2,8 @@ package net.dries008.coolmod.block;
 
 import net.dries008.coolmod.CoolMod;
 import net.dries008.coolmod.block.custom.LaucherBlock;
+import net.dries008.coolmod.block.custom.Superactivetrash;
+import net.dries008.coolmod.block.custom.radiohealcrop;
 import net.dries008.coolmod.item.ModCreativeModeTab;
 import net.dries008.coolmod.item.ModItems;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -9,6 +11,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -36,6 +39,14 @@ public class ModBlocks {
     public static final RegistryObject<Block> JUMPBLOCK = registerBlock("jumpblock",
             () -> new LaucherBlock(BlockBehaviour.Properties.of(Material.HEAVY_METAL)
                     .strength(6f).requiresCorrectToolForDrops()), ModCreativeModeTab.COOLMOD_TAB);
+
+    public static final RegistryObject<Block> SUPERACTIVETRASH = registerBlock("superactivetrash",
+            () -> new Superactivetrash(BlockBehaviour.Properties.of(Material.HEAVY_METAL)
+                    .strength(30f).requiresCorrectToolForDrops()
+                    .lightLevel(state -> state.getValue(Superactivetrash.LIT) ? 15 : 3)), ModCreativeModeTab.COOLMOD_TAB);
+
+    public static final RegistryObject<Block> RADIOHEALCROP = BLOCKS.register("radiohealcrop",
+            () -> new radiohealcrop(BlockBehaviour.Properties.copy(Blocks.WHEAT)));
 
 
 

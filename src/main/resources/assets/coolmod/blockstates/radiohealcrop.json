@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "age=0": {"model":  "coolmod:block/radiohealcrop_stage0"},
+    "age=1": {"model":  "coolmod:block/radiohealcrop_stage1"},
+    "age=2": {"model":  "coolmod:block/radiohealcrop_stage2"},
+    "age=3": {"model":  "coolmod:block/radiohealcrop_stage3"},
+    "age=4": {"model":  "coolmod:block/radiohealcrop_stage4"},
+    "age=5": {"model":  "coolmod:block/radiohealcrop_stage5"},
+    "age=6": {"model":  "coolmod:block/radiohealcrop_stage6"}
+  }
+}

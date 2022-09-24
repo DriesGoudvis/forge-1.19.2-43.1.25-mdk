@@ -3,6 +3,8 @@ package net.dries008.coolmod;
 import com.mojang.logging.LogUtils;
 import net.dries008.coolmod.block.ModBlocks;
 import net.dries008.coolmod.item.ModItems;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -43,7 +45,7 @@ public class CoolMod
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.RADIOHEALCROP.get(), RenderType.cutout());
         }
     }
 }

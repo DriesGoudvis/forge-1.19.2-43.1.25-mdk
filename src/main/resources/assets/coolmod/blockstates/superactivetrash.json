@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=true": {"model":  "coolmod:block/superactivetrash_on"},
+    "lit=false": {"model":  "coolmod:block/superactivetrash_off"}
+  }
+}

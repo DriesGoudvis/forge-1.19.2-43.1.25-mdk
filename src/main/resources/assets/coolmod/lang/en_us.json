@@ -1,10 +1,15 @@
 {
   "item.coolmod.radiotrash": "Radioactive trash",
   "item.coolmod.eightball": "Toxic eightball",
+  "item.coolmod.radiohealcropseeds": "Chrysanthemum Asparagus seeds",
+  "item.coolmod.radiohealcropeat": "Chrysanthemum Asparagus fruit",
+
 
   "block.coolmod.compressed_trash": "Compressed trash",
   "block.coolmod.radiotrashblock": "Radioactive trash block",
   "block.coolmod.jumpblock": "Jumpy block",
+  "block.coolmod.superactivetrash": "Super radioactive trash",
+  "block.coolmod.radiohealcrop": "Chrysanthemum Asparagus plant",
 
   "itemGroup.coolmodtab": "cool tab"
 }

@@ -26,7 +26,8 @@ public class LaucherBlock extends Block {
     @Override
     public void stepOn(Level level, BlockPos blockPos, BlockState blockState, Entity entity) {
         if(entity instanceof LivingEntity livingEntity){
-    livingEntity.addEffect(new MobEffectInstance(MobEffects.JUMP, 20));
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 20));
+            livingEntity.setDeltaMovement(entity.getDeltaMovement().add(0.0f, 1.0f, 0.0f));
         }
 
 
