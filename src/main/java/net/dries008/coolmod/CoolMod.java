@@ -3,6 +3,7 @@ package net.dries008.coolmod;
 import com.mojang.logging.LogUtils;
 import net.dries008.coolmod.block.ModBlocks;
 import net.dries008.coolmod.item.ModItems;
+import net.dries008.coolmod.villager.ModVillagers;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.common.MinecraftForge;
@@ -27,6 +28,8 @@ public class CoolMod
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
 
+        ModVillagers.register(modEventBus);
+
         modEventBus.addListener(this::commonSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
@@ -34,7 +37,9 @@ public class CoolMod
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-
+        event.enqueueWork(() -> {
+            ModVillagers.registerPOIs();
+        });
     }
 
 
