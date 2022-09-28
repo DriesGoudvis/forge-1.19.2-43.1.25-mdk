@@ -3,6 +3,7 @@ package net.dries008.coolmod;
 import com.mojang.logging.LogUtils;
 import net.dries008.coolmod.block.ModBlocks;
 import net.dries008.coolmod.item.ModItems;
+import net.dries008.coolmod.painting.ModPaintings;
 import net.dries008.coolmod.villager.ModVillagers;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -29,6 +30,7 @@ public class CoolMod
         ModBlocks.register(modEventBus);
 
         ModVillagers.register(modEventBus);
+        ModPaintings.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
