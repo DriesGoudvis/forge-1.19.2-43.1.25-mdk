@@ -5,6 +5,8 @@ import net.dries008.coolmod.block.ModBlocks;
 import net.dries008.coolmod.item.ModItems;
 import net.dries008.coolmod.painting.ModPaintings;
 import net.dries008.coolmod.villager.ModVillagers;
+import net.dries008.coolmod.world.feature.ModConfiguredFeatures;
+import net.dries008.coolmod.world.feature.ModPlacedFeatures;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.common.MinecraftForge;
@@ -31,6 +33,9 @@ public class CoolMod
 
         ModVillagers.register(modEventBus);
         ModPaintings.register(modEventBus);
+
+        ModConfiguredFeatures.register(modEventBus);
+        ModPlacedFeatures.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
