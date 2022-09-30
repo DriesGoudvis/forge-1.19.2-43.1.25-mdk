@@ -1,6 +1,6 @@
 {
   "type": "forge:add_features",
   "biomes": "#minecraft:is_end",
-  "features:": "coolmod:endsuperactivetrashplaced",
+  "features": "coolmod:endsuperactivetrashplaced",
   "step": "underground_ores"
 }

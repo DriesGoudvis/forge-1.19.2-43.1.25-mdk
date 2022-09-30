@@ -1,6 +1,6 @@
 {
   "type": "forge:add_features",
   "biomes": "#minecraft:is_nether",
-  "features:": "coolmod:nethersuperactivetrashplaced",
+  "features": "coolmod:nethersuperactivetrashplaced",
   "step": "underground_ores"
 }
