@@ -13,5 +13,9 @@
 
   "itemGroup.coolmodtab": "cool tab",
 
-  "entity.minecraft.villager.coolmod.trashmaster": "Master of the trash"
+  "entity.minecraft.villager.coolmod.trashmaster": "Master of the trash",
+
+  "key.category.coolmod.coolmod": "Coolmod",
+  "key.coolmod.jump_very_high": "Just jumping, but higher"
+
 }

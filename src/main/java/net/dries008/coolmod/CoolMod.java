@@ -57,7 +57,7 @@ public class CoolMod
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            ItemBlockRenderTypes.setRenderLayer(ModBlocks.RADIOHEALCROP.get(), RenderType.cutout());
+
         }
     }
 }
