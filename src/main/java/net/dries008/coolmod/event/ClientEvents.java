@@ -2,6 +2,9 @@ package net.dries008.coolmod.event;
 
 import com.mojang.math.Vector3d;
 import net.dries008.coolmod.CoolMod;
+import net.dries008.coolmod.networking.ModMessage;
+import net.dries008.coolmod.networking.packet.DrinkWaterC2S;
+import net.dries008.coolmod.networking.packet.ExampleC2SPacket;
 import net.dries008.coolmod.util.KeyBinding;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -18,8 +21,12 @@ public class ClientEvents {
         @SubscribeEvent
         public static void onKeyInput(InputEvent.Key event){
 
-            if(KeyBinding.JUMPING_HIGH_KEY.consumeClick()){
+            if(KeyBinding.TESTER.consumeClick()){
+                ModMessage.sendToServer(new ExampleC2SPacket());
+            }
 
+            if(KeyBinding.DRINKING.consumeClick()){
+                ModMessage.sendToServer(new DrinkWaterC2S());
             }
         }
     }
@@ -28,7 +35,8 @@ public class ClientEvents {
     public static class  ClientModBusEvents{
         @SubscribeEvent
         public static void onKeyRegister(RegisterKeyMappingsEvent event){
-            event.register(KeyBinding.JUMPING_HIGH_KEY);
+            event.register(KeyBinding.TESTER);
+            event.register(KeyBinding.DRINKING);
         }
     }
 }

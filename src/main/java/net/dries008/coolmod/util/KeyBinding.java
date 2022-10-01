@@ -7,8 +7,13 @@ import org.lwjgl.glfw.GLFW;
 
 public class KeyBinding {
     public static final String KEY_CATEGORY_COOLMOD = "key.category.coolmod.coolmod";
-    public static final String KEY_JUMP_VERY_HIGH = "key.coolmod.jump_very_high";
+    public static final String TEST = "key.coolmod.test";
+    public static final String DRINK = "key.coolmod.drink";
 
-    public static final KeyMapping JUMPING_HIGH_KEY =new KeyMapping(KEY_JUMP_VERY_HIGH, KeyConflictContext.IN_GAME,
+
+    public static final KeyMapping TESTER =new KeyMapping(TEST, KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_0, KEY_CATEGORY_COOLMOD);
+
+    public static final KeyMapping DRINKING =new KeyMapping(DRINK, KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, KEY_CATEGORY_COOLMOD);
 }

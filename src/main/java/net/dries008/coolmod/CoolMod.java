@@ -3,6 +3,7 @@ package net.dries008.coolmod;
 import com.mojang.logging.LogUtils;
 import net.dries008.coolmod.block.ModBlocks;
 import net.dries008.coolmod.item.ModItems;
+import net.dries008.coolmod.networking.ModMessage;
 import net.dries008.coolmod.painting.ModPaintings;
 import net.dries008.coolmod.villager.ModVillagers;
 import net.dries008.coolmod.world.feature.ModConfiguredFeatures;
@@ -45,8 +46,10 @@ public class CoolMod
     private void commonSetup(final FMLCommonSetupEvent event)
     {
         event.enqueueWork(() -> {
+            ModMessage.register();
             ModVillagers.registerPOIs();
         });
+
     }
 
 
