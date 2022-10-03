@@ -2,11 +2,10 @@ package net.dries008.coolmod.item;
 
 import net.dries008.coolmod.CoolMod;
 import net.dries008.coolmod.block.ModBlocks;
+import net.dries008.coolmod.fluid.ModFluids;
 import net.dries008.coolmod.item.custom.EightBallItem;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.*;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -28,6 +27,10 @@ public class ModItems {
     public static final RegistryObject<Item> RADIOHEALCROPEAT = ITEMS.register("radiohealcropeat",
             () -> new Item(new Item.Properties().tab(ModCreativeModeTab.COOLMOD_TAB)
                     .food(new FoodProperties.Builder().nutrition(5).saturationMod(5f).build())));
+
+public static final RegistryObject<Item> P_WATER_BUCKET = ITEMS.register("p_water_bucket",
+        () -> new BucketItem(ModFluids.SOURCE_P_WATER,
+                new Item.Properties().tab(ModCreativeModeTab.COOLMOD_TAB).craftRemainder(Items.BUCKET).stacksTo(1)));
 
 
     public static void register(IEventBus eventBus){

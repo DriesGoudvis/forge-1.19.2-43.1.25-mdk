@@ -4,6 +4,7 @@ import net.dries008.coolmod.CoolMod;
 import net.dries008.coolmod.block.custom.LaucherBlock;
 import net.dries008.coolmod.block.custom.Superactivetrash;
 import net.dries008.coolmod.block.custom.radiohealcrop;
+import net.dries008.coolmod.fluid.ModFluids;
 import net.dries008.coolmod.item.ModCreativeModeTab;
 import net.dries008.coolmod.item.ModItems;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DropExperienceBlock;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -48,7 +50,8 @@ public class ModBlocks {
     public static final RegistryObject<Block> RADIOHEALCROP = BLOCKS.register("radiohealcrop",
             () -> new radiohealcrop(BlockBehaviour.Properties.copy(Blocks.WHEAT)));
 
-
+    public static final RegistryObject<LiquidBlock> P_WATER_BLOCK = BLOCKS.register("p_water_block",
+            () -> new LiquidBlock(ModFluids.SOURCE_P_WATER, BlockBehaviour.Properties.copy(Blocks.WATER)));
 
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, CreativeModeTab tab) {

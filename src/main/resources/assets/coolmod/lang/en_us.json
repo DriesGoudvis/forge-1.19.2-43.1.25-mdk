@@ -3,6 +3,7 @@
   "item.coolmod.eightball": "Toxic eightball",
   "item.coolmod.radiohealcropseeds": "Chrysanthemum Asparagus seeds",
   "item.coolmod.radiohealcropeat": "Chrysanthemum Asparagus fruit",
+  "item.coolmod.p_water_bucket": "Bucket with P water",
 
 
   "block.coolmod.compressed_trash": "Compressed trash",
@@ -18,5 +19,6 @@
   "key.category.coolmod.coolmod": "Coolmod",
   "key.coolmod.test": "Just a test key",
   "key.coolmod.drink": "Drink,"
+
 
 }
