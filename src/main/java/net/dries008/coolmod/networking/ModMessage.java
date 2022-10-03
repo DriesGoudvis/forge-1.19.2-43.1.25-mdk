@@ -3,6 +3,7 @@ package net.dries008.coolmod.networking;
 import net.dries008.coolmod.CoolMod;
 import net.dries008.coolmod.networking.packet.DrinkWaterC2S;
 import net.dries008.coolmod.networking.packet.ExampleC2SPacket;
+import net.dries008.coolmod.networking.packet.ThirstDataSyncS2C;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
@@ -38,6 +39,12 @@ public class ModMessage {
                 .decoder(DrinkWaterC2S::new)
                 .encoder(DrinkWaterC2S::toBytes)
                 .consumerMainThread(DrinkWaterC2S::handle)
+                .add();
+
+        net.messageBuilder(ThirstDataSyncS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(ThirstDataSyncS2C::new)
+                .encoder(ThirstDataSyncS2C::toBytes)
+                .consumerMainThread(ThirstDataSyncS2C::handle)
                 .add();
 
     }

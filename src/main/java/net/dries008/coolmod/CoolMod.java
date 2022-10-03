@@ -8,8 +8,6 @@ import net.dries008.coolmod.painting.ModPaintings;
 import net.dries008.coolmod.villager.ModVillagers;
 import net.dries008.coolmod.world.feature.ModConfiguredFeatures;
 import net.dries008.coolmod.world.feature.ModPlacedFeatures;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

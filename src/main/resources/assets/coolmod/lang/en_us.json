@@ -17,8 +17,6 @@
 
   "key.category.coolmod.coolmod": "Coolmod",
   "key.coolmod.test": "Just a test key",
-  "key.coolmod.drink": "Drink,",
-  "message.coolmod.drink_water": "YAY, I have hydrated the living system of collaborating cells, called the body, using life's juice, aka dihydrogen monoxide, hereby I expended the time at wich the collaborating cells will keep working together by at least three days.",
-  "message.coolmod.no_water": "There doesn't seem to be any water nearby."
+  "key.coolmod.drink": "Drink,"
 
 }

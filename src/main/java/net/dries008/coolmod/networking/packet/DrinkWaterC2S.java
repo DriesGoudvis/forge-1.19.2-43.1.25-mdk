@@ -1,5 +1,7 @@
 package net.dries008.coolmod.networking.packet;
 
+import net.dries008.coolmod.networking.ModMessage;
+import net.dries008.coolmod.thirst.PlayerThirstProvider;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -17,8 +19,6 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class DrinkWaterC2S {
-    private static final String MESSAGE_DRINK_WATER = "message.coolmod.drink_water";
-    private static final String MESSAGE_NO_WATER = "message.coolmod.no_water";
 
     public DrinkWaterC2S(){
 
@@ -40,12 +40,17 @@ public class DrinkWaterC2S {
             ServerLevel level = player.getLevel();
 
             if(hasWaterAroundThem(player, level, 1)){
-                player.sendSystemMessage(Component.translatable(MESSAGE_DRINK_WATER).withStyle(ChatFormatting.DARK_AQUA));
                 level.playSound(null, player.getOnPos(), SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS,
                         0.5f, level.random.nextFloat() * 0.1f + 0.9f);
+                player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
+                    thirst.addThirst(1);
+                    ModMessage.sendToPlayer(new ThirstDataSyncS2C(thirst.getThirst()), player);
+                });
 
             }else{
-                player.sendSystemMessage(Component.translatable(MESSAGE_NO_WATER).withStyle(ChatFormatting.RED));
+                player.getCapability(PlayerThirstProvider.PLAYER_THIRST).ifPresent(thirst -> {
+                    ModMessage.sendToPlayer(new ThirstDataSyncS2C(thirst.getThirst()), player);
+                });
             }
         });
         return true;

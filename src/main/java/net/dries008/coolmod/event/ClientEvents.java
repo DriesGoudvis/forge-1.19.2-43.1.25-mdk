@@ -1,16 +1,14 @@
 package net.dries008.coolmod.event;
 
-import com.mojang.math.Vector3d;
 import net.dries008.coolmod.CoolMod;
+import net.dries008.coolmod.client.ThirstHudOverlay;
 import net.dries008.coolmod.networking.ModMessage;
 import net.dries008.coolmod.networking.packet.DrinkWaterC2S;
 import net.dries008.coolmod.networking.packet.ExampleC2SPacket;
 import net.dries008.coolmod.util.KeyBinding;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -37,6 +35,11 @@ public class ClientEvents {
         public static void onKeyRegister(RegisterKeyMappingsEvent event){
             event.register(KeyBinding.TESTER);
             event.register(KeyBinding.DRINKING);
+        }
+
+        @SubscribeEvent
+        public static void registerGuiOverlay(RegisterGuiOverlaysEvent event){
+            event.registerAboveAll("thirst", ThirstHudOverlay.HUD_THIRST);
         }
     }
 }
