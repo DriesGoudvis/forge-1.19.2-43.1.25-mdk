@@ -25,7 +25,7 @@ public class ModFluids {
 
     public static final ForgeFlowingFluid.Properties P_WATER_FLUID_PROPERTIES = new ForgeFlowingFluid.Properties(
             ModFluidTypes.P_WATER_FLUID_TYPE, SOURCE_P_WATER, FLOWING_P_WATER)
-            .slopeFindDistance(2).levelDecreasePerBlock(2).block(ModBlocks.P_WATER_BLOCK).bucket(ModItems.P_WATER_BUCKET);
+            .slopeFindDistance(2).levelDecreasePerBlock(1).block(ModBlocks.P_WATER_BLOCK).bucket(ModItems.P_WATER_BUCKET);
 
 
     public static void register(IEventBus eventBus){

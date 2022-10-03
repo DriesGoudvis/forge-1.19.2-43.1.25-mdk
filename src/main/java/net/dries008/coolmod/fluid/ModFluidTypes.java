@@ -23,7 +23,7 @@ public class ModFluidTypes {
 
     public static final RegistryObject<FluidType> P_WATER_FLUID_TYPE= register("p_water_fluid",
             FluidType.Properties.create().canDrown(true).canPushEntity(true).canSwim(true).supportsBoating(true)
-                    .lightLevel(2).density(15).viscosity(2).sound(SoundAction.get("drink"),
+                    .lightLevel(2).density(15).viscosity(1).sound(SoundAction.get("drink"),
                             SoundEvents.HONEY_DRINK));
 
 
