@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "coolmod:block/precision_operation_table"
+    },
+    "facing=north": {
+      "model": "coolmod:block/precision_operation_table",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "coolmod:block/precision_operation_table",
+      "y": 270
+    },
+    "facing=west": {
+      "model": "coolmod:block/precision_operation_table",
+      "y": 90
+    }
+  }
+}

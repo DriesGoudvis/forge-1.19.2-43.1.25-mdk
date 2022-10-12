@@ -2,14 +2,18 @@ package net.dries008.coolmod;
 
 import com.mojang.logging.LogUtils;
 import net.dries008.coolmod.block.ModBlocks;
+import net.dries008.coolmod.block.entity.ModBlockEntities;
 import net.dries008.coolmod.fluid.ModFluidTypes;
 import net.dries008.coolmod.fluid.ModFluids;
 import net.dries008.coolmod.item.ModItems;
 import net.dries008.coolmod.networking.ModMessage;
 import net.dries008.coolmod.painting.ModPaintings;
+import net.dries008.coolmod.screen.ModMenuTypes;
+import net.dries008.coolmod.screen.PrecisionOperationTableScreen;
 import net.dries008.coolmod.villager.ModVillagers;
 import net.dries008.coolmod.world.feature.ModConfiguredFeatures;
 import net.dries008.coolmod.world.feature.ModPlacedFeatures;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.common.MinecraftForge;
@@ -43,6 +47,9 @@ public class CoolMod
         ModFluids.register(modEventBus);
         ModFluidTypes.register(modEventBus);
 
+        ModBlockEntities.register(modEventBus);
+        ModMenuTypes.register(modEventBus);
+
         modEventBus.addListener(this::commonSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
@@ -67,6 +74,8 @@ public class CoolMod
         {
             ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_P_WATER.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_P_WATER.get(), RenderType.translucent());
+
+            MenuScreens.register(ModMenuTypes.PRECISION_OPERATION_TABLE_MENU.get(), PrecisionOperationTableScreen::new);
         }
     }
 }

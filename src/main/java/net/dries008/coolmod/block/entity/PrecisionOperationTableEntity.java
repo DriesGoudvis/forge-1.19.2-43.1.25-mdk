@@ -1,0 +1,197 @@
+package net.dries008.coolmod.block.entity;
+
+import net.dries008.coolmod.item.ModItems;
+import net.dries008.coolmod.screen.PrecisionOperationTableMenu;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.PrintStream;
+
+public class PrecisionOperationTableEntity extends BlockEntity implements MenuProvider {
+    //creates the inventory slots where items can be in
+    private final ItemStackHandler itemHandler = new ItemStackHandler(3){
+        @Override
+        protected void onContentsChanged(int slot) {
+            setChanged();
+        }
+    };
+
+    private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
+
+    protected final ContainerData data;
+    private int progress = 0;
+    private int maxProgress = 78;
+
+    public PrecisionOperationTableEntity( BlockPos pos, BlockState state) {
+        super(ModBlockEntities.PRECISION_OPERATION_TABLE.get(), pos, state);
+        //for saving date between server and client (I think)
+        this.data = new ContainerData() {
+            //getting the two variables
+            @Override
+            public int get(int index) {
+                return switch (index){
+                    case 0 -> PrecisionOperationTableEntity.this.progress;
+                    case 1 -> PrecisionOperationTableEntity.this.maxProgress;
+                    default -> 0;
+                };
+            }
+            //setting the two variables
+            @Override
+            public void set(int index, int value) {
+                switch (index){
+                    case 0 -> PrecisionOperationTableEntity.this.progress = value;
+                    case 1 -> PrecisionOperationTableEntity.this.maxProgress = value;
+                };
+            }
+            //How many variables that need to get syncronized
+            @Override
+            public int getCount() {
+                return 2;
+            }
+        };
+    }
+
+    //is the name of the block?
+    @Override
+    public Component getDisplayName() {
+        return Component.literal("Precision operation table");
+    }
+
+    //probably creates a menu to display the inventory
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+        return new PrecisionOperationTableMenu(id, inventory, this, this.data);
+    }
+
+    //??
+    @Override
+    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+        if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+            return lazyItemHandler.cast();
+        }
+
+        return super.getCapability(cap, side);
+    }
+
+    //does something when the block gets loaded
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        lazyItemHandler = LazyOptional.of(()->itemHandler);
+    }
+
+    //uhmmmmmm, makes the block invalid?
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        lazyItemHandler.invalidate();
+    }
+
+    //saves the inventory
+    @Override
+    protected void saveAdditional(CompoundTag nbt) {
+        nbt.put("inventory", itemHandler.serializeNBT());
+        nbt.putInt("precision_operation_table.progress", this.progress);
+
+        super.saveAdditional(nbt);
+    }
+
+    //loads the inventory
+    @Override
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
+        itemHandler.deserializeNBT(nbt.getCompound("inventory"));
+        progress = nbt.getInt("precision_operation_table.progress");
+    }
+
+
+    //drops content in world when called / probably gets called when block gets destroyed
+    public void drops(){
+        SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());
+        for(int i =0;i < itemHandler.getSlots(); i++){
+            inventory.setItem(i, itemHandler.getStackInSlot(i));
+        }
+
+        Containers.dropContents(this.level, this.worldPosition, inventory);
+    }
+
+    //does something every tick
+    public static void tick(Level level, BlockPos blockPos, BlockState blockState, PrecisionOperationTableEntity pEntity) {
+        if(level.isClientSide()){
+            return;
+        }
+
+        if(hasRecipe(pEntity)){
+            pEntity.progress++;
+            setChanged(level, blockPos, blockState);
+
+            if(pEntity.progress >= pEntity.maxProgress){
+                craftItem(pEntity);
+            }
+        }else{
+            pEntity.resetProgress();
+            setChanged(level, blockPos, blockState);
+        }
+
+
+    }
+
+    private void resetProgress() {
+        this.progress = 0;
+    }
+
+    private static void craftItem(PrecisionOperationTableEntity pEntity) {
+        if(hasRecipe(pEntity)){
+            //extracts out item slot 1, 1 item, and ite actually happens (it doesn't simulate it)
+            pEntity.itemHandler.extractItem(1,1,false);
+            pEntity.itemHandler.setStackInSlot(2, new ItemStack(Items.OAK_SAPLING,
+                    pEntity.itemHandler.getStackInSlot(2).getCount() + 1));
+            pEntity.resetProgress();
+        }
+    }
+
+    private static boolean hasRecipe(PrecisionOperationTableEntity pEntity) {
+        SimpleContainer inventory = new SimpleContainer(pEntity.itemHandler.getSlots());
+        for(int i = 0; i < pEntity.itemHandler.getSlots(); i++){
+            inventory.setItem(i, pEntity.itemHandler.getStackInSlot(i));
+        }
+
+        boolean hasRawGemInFirstSlot = pEntity.itemHandler.getStackInSlot(1).getItem() == Items.APPLE;
+        return hasRawGemInFirstSlot && canInsertAmountIntoOutputSlot(inventory) &&
+                canInsertItemIntoOutputSlot(inventory, new ItemStack(Items.OAK_SAPLING, 1));
+
+
+    }
+
+    private static boolean canInsertItemIntoOutputSlot(SimpleContainer inventory, ItemStack itemStack) {
+        return inventory.getItem(2).getItem() == itemStack.getItem() || inventory.getItem(2).isEmpty();
+    }
+
+    private static boolean canInsertAmountIntoOutputSlot(SimpleContainer inventory) {
+        return inventory.getItem(2).getMaxStackSize() > inventory.getItem(2).getCount();
+    }
+}

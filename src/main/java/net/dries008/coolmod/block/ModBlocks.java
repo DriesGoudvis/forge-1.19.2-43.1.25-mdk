@@ -2,6 +2,7 @@ package net.dries008.coolmod.block;
 
 import net.dries008.coolmod.CoolMod;
 import net.dries008.coolmod.block.custom.LaucherBlock;
+import net.dries008.coolmod.block.custom.PrecisionOperationTable;
 import net.dries008.coolmod.block.custom.Superactivetrash;
 import net.dries008.coolmod.block.custom.radiohealcrop;
 import net.dries008.coolmod.fluid.ModFluids;
@@ -52,6 +53,13 @@ public class ModBlocks {
 
     public static final RegistryObject<LiquidBlock> P_WATER_BLOCK = BLOCKS.register("p_water_block",
             () -> new LiquidBlock(ModFluids.SOURCE_P_WATER, BlockBehaviour.Properties.copy(Blocks.WATER)));
+
+    public static final RegistryObject<Block> PRECISION_OPERATION_TABLE =registerBlock("precision_operation_table",
+            () -> new PrecisionOperationTable(BlockBehaviour.Properties.of(Material.WOOD)
+                    .strength(4f).noOcclusion()), ModCreativeModeTab.COOLMOD_TAB);
+
+
+
 
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, CreativeModeTab tab) {

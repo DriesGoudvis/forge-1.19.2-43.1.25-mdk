@@ -28,9 +28,13 @@ public class ModItems {
             () -> new Item(new Item.Properties().tab(ModCreativeModeTab.COOLMOD_TAB)
                     .food(new FoodProperties.Builder().nutrition(5).saturationMod(5f).build())));
 
-public static final RegistryObject<Item> P_WATER_BUCKET = ITEMS.register("p_water_bucket",
+    public static final RegistryObject<Item> P_WATER_BUCKET = ITEMS.register("p_water_bucket",
         () -> new BucketItem(ModFluids.SOURCE_P_WATER,
                 new Item.Properties().tab(ModCreativeModeTab.COOLMOD_TAB).craftRemainder(Items.BUCKET).stacksTo(1)));
+
+    public static final RegistryObject<Item> SUPERSWORD = ITEMS.register("supersword",
+            () -> new SwordItem(Tiers.NETHERITE, 15, -3.0f,
+                    new Item.Properties().tab(ModCreativeModeTab.COOLMOD_TAB).stacksTo(1).durability(10000)));
 
 
     public static void register(IEventBus eventBus){
