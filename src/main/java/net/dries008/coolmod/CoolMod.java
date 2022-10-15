@@ -8,6 +8,7 @@ import net.dries008.coolmod.fluid.ModFluids;
 import net.dries008.coolmod.item.ModItems;
 import net.dries008.coolmod.networking.ModMessage;
 import net.dries008.coolmod.painting.ModPaintings;
+import net.dries008.coolmod.recipe.ModRecipes;
 import net.dries008.coolmod.screen.ModMenuTypes;
 import net.dries008.coolmod.screen.PrecisionOperationTableScreen;
 import net.dries008.coolmod.villager.ModVillagers;
@@ -49,6 +50,8 @@ public class CoolMod
 
         ModBlockEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
+
+        ModRecipes.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 

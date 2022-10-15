@@ -1,6 +1,8 @@
 package net.dries008.coolmod.block.entity;
 
+import net.dries008.coolmod.CoolMod;
 import net.dries008.coolmod.item.ModItems;
+import net.dries008.coolmod.recipe.PrecisionOperationTableRecipe;
 import net.dries008.coolmod.screen.PrecisionOperationTableMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.PrintStream;
+import java.util.Optional;
 
 public class PrecisionOperationTableEntity extends BlockEntity implements MenuProvider {
     //creates the inventory slots where items can be in
@@ -165,24 +168,38 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
     }
 
     private static void craftItem(PrecisionOperationTableEntity pEntity) {
-        if(hasRecipe(pEntity)){
-            //extracts out item slot 1, 1 item, and ite actually happens (it doesn't simulate it)
-            pEntity.itemHandler.extractItem(1,1,false);
-            pEntity.itemHandler.setStackInSlot(2, new ItemStack(Items.OAK_SAPLING,
-                    pEntity.itemHandler.getStackInSlot(2).getCount() + 1));
-            pEntity.resetProgress();
-        }
-    }
-
-    private static boolean hasRecipe(PrecisionOperationTableEntity pEntity) {
+        Level level = pEntity.level;
         SimpleContainer inventory = new SimpleContainer(pEntity.itemHandler.getSlots());
         for(int i = 0; i < pEntity.itemHandler.getSlots(); i++){
             inventory.setItem(i, pEntity.itemHandler.getStackInSlot(i));
         }
 
-        boolean hasRawGemInFirstSlot = pEntity.itemHandler.getStackInSlot(1).getItem() == Items.APPLE;
-        return hasRawGemInFirstSlot && canInsertAmountIntoOutputSlot(inventory) &&
-                canInsertItemIntoOutputSlot(inventory, new ItemStack(Items.OAK_SAPLING, 1));
+        Optional<PrecisionOperationTableRecipe> recipe = level.getRecipeManager()
+                .getRecipeFor(PrecisionOperationTableRecipe.Type.INSTANCE, inventory, level);
+
+
+        if(hasRecipe(pEntity)){
+            //extracts out item slot 1, 1 item, and ite actually happens (it doesn't simulate it)
+            pEntity.itemHandler.extractItem(1,1,false);
+
+                pEntity.itemHandler.setStackInSlot(2, new ItemStack(recipe.get().getResultItem().getItem(),
+                        pEntity.itemHandler.getStackInSlot(2).getCount() + 1));
+                pEntity.resetProgress();
+        }
+    }
+
+    private static boolean hasRecipe(PrecisionOperationTableEntity pEntity) {
+        Level level = pEntity.level;
+        SimpleContainer inventory = new SimpleContainer(pEntity.itemHandler.getSlots());
+        for(int i = 0; i < pEntity.itemHandler.getSlots(); i++){
+            inventory.setItem(i, pEntity.itemHandler.getStackInSlot(i));
+        }
+
+        Optional<PrecisionOperationTableRecipe> recipe = level.getRecipeManager()
+                .getRecipeFor(PrecisionOperationTableRecipe.Type.INSTANCE, inventory, level);
+
+        return recipe.isPresent() && canInsertAmountIntoOutputSlot(inventory) &&
+                canInsertItemIntoOutputSlot(inventory, recipe.get().getResultItem());
 
 
     }

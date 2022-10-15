@@ -14,6 +14,8 @@
   "block.coolmod.radiohealcrop": "Chrysanthemum Asparagus plant",
   "block.coolmod.precision_operation_table": "Precision operations table",
 
+  "fluid_type.coolmod.p_water_fluid":  "P-water",
+
   "itemGroup.coolmodtab": "cool tab",
 
   "entity.minecraft.villager.coolmod.trashmaster": "Master of the trash",
@@ -21,6 +23,5 @@
   "key.category.coolmod.coolmod": "Coolmod",
   "key.coolmod.test": "Just a test key",
   "key.coolmod.drink": "Drink,"
-
 
 }

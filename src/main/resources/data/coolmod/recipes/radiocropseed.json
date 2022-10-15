@@ -1,0 +1,12 @@
+{
+  "type": "coolmod:precision_operation",
+  "ingredients": [
+    {
+      "item": "coolmod:radiotrashblock"
+    }
+  ],
+  "output": {
+    "item": "coolmod:radiohealcropseeds"
+
+  }
+}
