@@ -19,7 +19,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
@@ -33,12 +35,63 @@ public class PrecisionOperationTable extends BaseEntityBlock {
     }
 
 
-    private static final VoxelShape SHAPE = Block.box(0,0,0,16,9,16);
 
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter getter, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+    // TO FUCKING LARGE TO EXPLAIN, JUST OPEN IT AND READ!!
+        switch (state.getValue(FACING)) {
+            case NORTH -> {
+                VoxelShape NORTH = Shapes.empty();
+                NORTH = Shapes.join(NORTH, Block.box(0, 6, 0, 16, 9, 16), BooleanOp.OR);
+                NORTH = Shapes.join(NORTH, Block.box(0, 0, 14, 2, 6, 16), BooleanOp.OR);
+                NORTH = Shapes.join(NORTH, Block.box(14, 0, 14, 16, 6, 16), BooleanOp.OR);
+                NORTH = Shapes.join(NORTH, Block.box(14, 0, 0, 16, 6, 2), BooleanOp.OR);
+                NORTH = Shapes.join(NORTH, Block.box(0, 0, 0, 2, 6, 2), BooleanOp.OR);
+                NORTH = Shapes.join(NORTH, Block.box(1, 9, 5, 15, 14.75, 11), BooleanOp.OR);
+                return NORTH;
+            }
+            case SOUTH -> {
+                VoxelShape SOUTH = Shapes.empty();
+                SOUTH = Shapes.join(SOUTH, Block.box(0, 6, 0, 16, 9, 16), BooleanOp.OR);
+                SOUTH = Shapes.join(SOUTH, Block.box(0, 0, 14, 2, 6, 16), BooleanOp.OR);
+                SOUTH = Shapes.join(SOUTH, Block.box(14, 0, 14, 16, 6, 16), BooleanOp.OR);
+                SOUTH = Shapes.join(SOUTH, Block.box(14, 0, 0, 16, 6, 2), BooleanOp.OR);
+                SOUTH = Shapes.join(SOUTH, Block.box(0, 0, 0, 2, 6, 2), BooleanOp.OR);
+                SOUTH = Shapes.join(SOUTH, Block.box(1, 9, 5, 15, 14.75, 11), BooleanOp.OR);
+                return SOUTH;
+            }
+            case EAST -> {
+                VoxelShape EAST = Shapes.empty();
+                EAST = Shapes.join(EAST, Block.box(0, 6, 0, 16, 9, 16), BooleanOp.OR);
+                EAST = Shapes.join(EAST, Block.box(0, 0, 14, 2, 6, 16), BooleanOp.OR);
+                EAST = Shapes.join(EAST, Block.box(14, 0, 14, 16, 6, 16), BooleanOp.OR);
+                EAST = Shapes.join(EAST, Block.box(14, 0, 0, 16, 6, 2), BooleanOp.OR);
+                EAST = Shapes.join(EAST, Block.box(0, 0, 0, 2, 6, 2), BooleanOp.OR);
+                EAST = Shapes.join(EAST, Block.box(5, 9, 1, 11, 14.75, 15), BooleanOp.OR);
+                return EAST;
+            }
+            case WEST -> {
+                VoxelShape WEST = Shapes.empty();
+                WEST = Shapes.join(WEST, Block.box(0, 6, 0, 16, 9, 16), BooleanOp.OR);
+                WEST = Shapes.join(WEST, Block.box(0, 0, 14, 2, 6, 16), BooleanOp.OR);
+                WEST = Shapes.join(WEST, Block.box(14, 0, 14, 16, 6, 16), BooleanOp.OR);
+                WEST = Shapes.join(WEST, Block.box(14, 0, 0, 16, 6, 2), BooleanOp.OR);
+                WEST = Shapes.join(WEST, Block.box(0, 0, 0, 2, 6, 2), BooleanOp.OR);
+                WEST = Shapes.join(WEST, Block.box(5, 9, 1, 11, 14.75, 15), BooleanOp.OR);
+                return WEST;
+            }
+            default -> {
+                VoxelShape SHAPE = Shapes.empty();
+                SHAPE = Shapes.join(SHAPE, Block.box(0, 6, 0, 16, 9, 16), BooleanOp.OR);
+                SHAPE = Shapes.join(SHAPE, Block.box(0, 0, 14, 2, 6, 16), BooleanOp.OR);
+                SHAPE = Shapes.join(SHAPE, Block.box(14, 0, 14, 16, 6, 16), BooleanOp.OR);
+                SHAPE = Shapes.join(SHAPE, Block.box(14, 0, 0, 16, 6, 2), BooleanOp.OR);
+                SHAPE = Shapes.join(SHAPE, Block.box(0, 0, 0, 2, 6, 2), BooleanOp.OR);
+                SHAPE = Shapes.join(SHAPE, Block.box(5, 9, 1, 11, 14.75, 15), BooleanOp.OR);
+                return SHAPE;
+            }
+        }
     }
 
     @Override

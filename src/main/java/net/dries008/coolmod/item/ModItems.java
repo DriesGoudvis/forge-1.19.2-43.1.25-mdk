@@ -4,6 +4,7 @@ import net.dries008.coolmod.CoolMod;
 import net.dries008.coolmod.block.ModBlocks;
 import net.dries008.coolmod.fluid.ModFluids;
 import net.dries008.coolmod.item.custom.EightBallItem;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -35,6 +36,10 @@ public class ModItems {
     public static final RegistryObject<Item> SUPERSWORD = ITEMS.register("supersword",
             () -> new SwordItem(Tiers.NETHERITE, 15, -3.0f,
                     new Item.Properties().tab(ModCreativeModeTab.COOLMOD_TAB).stacksTo(1).durability(10000)));
+
+    public static final RegistryObject<Item> SUPERAXE = ITEMS.register("superaxe",
+            () -> new AxeItem(Tiers.GOLD, 9.0f, 0.0f,
+                    new Item.Properties().tab(ModCreativeModeTab.COOLMOD_TAB).stacksTo(1).durability(650)));
 
 
     public static void register(IEventBus eventBus){

@@ -2,7 +2,7 @@
   "type": "coolmod:precision_operation",
   "ingredients": [
     {
-      "item": "coolmod:radiotrashblock"
+      "item": "coolmod:radiotrash"
     }
   ],
   "output": {
