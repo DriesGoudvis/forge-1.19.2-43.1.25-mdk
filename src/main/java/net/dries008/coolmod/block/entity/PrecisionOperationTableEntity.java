@@ -4,8 +4,11 @@ import net.dries008.coolmod.CoolMod;
 import net.dries008.coolmod.block.ModBlocks;
 import net.dries008.coolmod.block.custom.PrecisionOperationTable;
 import net.dries008.coolmod.item.ModItems;
+import net.dries008.coolmod.networking.ModMessage;
+import net.dries008.coolmod.networking.packet.EnergyDataSyncS2C;
 import net.dries008.coolmod.recipe.PrecisionOperationTableRecipe;
 import net.dries008.coolmod.screen.PrecisionOperationTableMenu;
+import net.dries008.coolmod.util.ModEnergyStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +28,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -47,7 +52,7 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             return switch (slot){
-                case 0 -> stack.getItem() == ModItems.RADIOHEALCROPSEEDS.get();
+                case 0 -> stack.getItem() == ModItems.RADIOHEALCROPEAT  .get();
                 case 1 -> stack.getItem() == ModItems.RADIOTRASH.get();
                 case 2 -> false;
                 default -> super.isItemValid(slot, stack);
@@ -55,6 +60,25 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
             };
         }
     };
+
+    private final ModEnergyStorage ENERGY_STORAGE = new ModEnergyStorage(60000, 256) {
+        @Override
+        public void onEnergyChanged() {
+            setChanged();
+            ModMessage.sentToClients(new EnergyDataSyncS2C(this.energy, getBlockPos()));
+        }
+    };
+    private static final int ENERGY_REQ = 32;
+
+    public ItemStack getRenderStack() {
+        ItemStack stack;
+        if(!itemHandler.getStackInSlot(2).isEmpty()){
+            stack = itemHandler.getStackInSlot(2);
+        }else{
+            stack = itemHandler.getStackInSlot(1);
+        }
+        return stack;
+    }
 
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
     private final Map<Direction, LazyOptional<WrappedHandler>> directionWrappedHandlerMap =
@@ -67,6 +91,7 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
                     Direction.WEST, LazyOptional.of(() -> new WrappedHandler(itemHandler, (index) -> index == 0 || index == 1,
                             (index, stack) -> itemHandler.isItemValid(0, stack) || itemHandler.isItemValid(1, stack))));
 
+    private LazyOptional<IEnergyStorage> lazyEnergyHandler = LazyOptional.empty();
 
     protected final ContainerData data;
     private int progress = 0;
@@ -107,6 +132,7 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
         return Component.literal("Precision operation table");
     }
 
+
     //probably creates a menu to display the inventory
     @Nullable
     @Override
@@ -114,10 +140,23 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
         return new PrecisionOperationTableMenu(id, inventory, this, this.data);
     }
 
+    public IEnergyStorage getEnergyStorage() {
+        return ENERGY_STORAGE;
+    }
+
+    public void setEnergyLevel(int energy) {
+        this.ENERGY_STORAGE.setEnergy(energy);
+    }
+
     //??
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if(cap == ForgeCapabilities.ENERGY){
+            return lazyEnergyHandler.cast();
+        }
+
+
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
             if(side == null) {
                 return lazyItemHandler.cast();
             }
@@ -146,6 +185,7 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
     public void onLoad() {
         super.onLoad();
         lazyItemHandler = LazyOptional.of(()->itemHandler);
+        lazyEnergyHandler = LazyOptional.of(() -> ENERGY_STORAGE);
     }
 
     //uhmmmmmm, makes the block invalid?
@@ -153,6 +193,7 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
     public void invalidateCaps() {
         super.invalidateCaps();
         lazyItemHandler.invalidate();
+        lazyEnergyHandler.invalidate();
     }
 
     //saves the inventory
@@ -160,6 +201,7 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
     protected void saveAdditional(CompoundTag nbt) {
         nbt.put("inventory", itemHandler.serializeNBT());
         nbt.putInt("precision_operation_table.progress", this.progress);
+        nbt.putInt("precision_operation_table.energy", ENERGY_STORAGE.getEnergyStored());
 
         super.saveAdditional(nbt);
     }
@@ -170,6 +212,7 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
         super.load(nbt);
         itemHandler.deserializeNBT(nbt.getCompound("inventory"));
         progress = nbt.getInt("precision_operation_table.progress");
+        ENERGY_STORAGE.setEnergy(nbt.getInt("precision_operation_table.energy"));
     }
 
 
@@ -189,8 +232,13 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
             return;
         }
 
-        if(hasRecipe(pEntity)){
+        if(hasTrashInFirstSlot(pEntity)){
+            pEntity.ENERGY_STORAGE.receiveEnergy(32, false);
+        }
+
+        if(hasRecipe(pEntity) && hasEnoughEnergy(pEntity)){
             pEntity.progress++;
+            extractEnergy(pEntity);
             setChanged(level, blockPos, blockState);
 
             if(pEntity.progress >= pEntity.maxProgress){
@@ -202,6 +250,18 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
         }
 
 
+    }
+
+    private static void extractEnergy(PrecisionOperationTableEntity pEntity) {
+        pEntity.ENERGY_STORAGE.extractEnergy(ENERGY_REQ, false);
+    }
+
+    private static boolean hasEnoughEnergy(PrecisionOperationTableEntity pEntity) {
+        return pEntity.ENERGY_STORAGE.getEnergyStored() >= ENERGY_REQ * pEntity.maxProgress;
+    }
+
+    private static boolean hasTrashInFirstSlot(PrecisionOperationTableEntity pEntity) {
+        return pEntity.itemHandler.getStackInSlot(0).getItem() == ModItems.RADIOHEALCROPEAT.get();
     }
 
     private void resetProgress() {
@@ -252,4 +312,5 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
     private static boolean canInsertAmountIntoOutputSlot(SimpleContainer inventory) {
         return inventory.getItem(2).getMaxStackSize() > inventory.getItem(2).getCount();
     }
+
 }

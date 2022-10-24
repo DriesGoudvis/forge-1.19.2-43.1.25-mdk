@@ -2,6 +2,7 @@ package net.dries008.coolmod.networking;
 
 import net.dries008.coolmod.CoolMod;
 import net.dries008.coolmod.networking.packet.DrinkWaterC2S;
+import net.dries008.coolmod.networking.packet.EnergyDataSyncS2C;
 import net.dries008.coolmod.networking.packet.ExampleC2SPacket;
 import net.dries008.coolmod.networking.packet.ThirstDataSyncS2C;
 import net.minecraft.resources.ResourceLocation;
@@ -47,6 +48,12 @@ public class ModMessage {
                 .consumerMainThread(ThirstDataSyncS2C::handle)
                 .add();
 
+        net.messageBuilder(EnergyDataSyncS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(EnergyDataSyncS2C::new)
+                .encoder(EnergyDataSyncS2C::toBytes)
+                .consumerMainThread(EnergyDataSyncS2C::handle)
+                .add();
+
     }
 
     public static <MSG> void sendToServer(MSG message){
@@ -55,6 +62,10 @@ public class ModMessage {
 
     public static <MSG> void sendToPlayer(MSG message, ServerPlayer player){
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), message);
+    }
+
+    public static <MSG> void sentToClients(MSG msg){
+        INSTANCE.send(PacketDistributor.ALL.noArg(), msg);
     }
 
 }

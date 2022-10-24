@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +39,7 @@ public class PrecisionOperationTableMenu extends AbstractContainerMenu {
 
 
         //checks if block can keep items, if it does, add slots
-        this.blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {
+        this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
             //this is obvious, right? or am I screwing myself up not explaining this?
             this.addSlot(new SlotItemHandler(handler, 0, 12, 15));
             this.addSlot(new SlotItemHandler(handler, 1, 86, 15));
@@ -51,6 +52,10 @@ public class PrecisionOperationTableMenu extends AbstractContainerMenu {
 
     public boolean isCrafting(){
         return data.get(0) > 0;
+    }
+
+    public PrecisionOperationTableEntity getBlockEntity() {
+        return this.blockEntity;
     }
 
     public int getScaledProgress(){
@@ -144,4 +149,6 @@ public class PrecisionOperationTableMenu extends AbstractContainerMenu {
             this.addSlot(new Slot(playerInventory, i,  8 + i * 18, 144));
         }
     }
+
+
 }
