@@ -6,8 +6,8 @@
   "item.coolmod.p_water_bucket": "Bucket with P water",
   "item.coolmod.supersword": "The ultimate sword of destruction",
   "item.coolmod.superaxe": "The destroyer of skulls",
-  "item.coolmod.armor": "Axe on the head?",
-
+  "item.coolmod.superpickaxe": "STONE CUCUMBER",
+  "item.coolmod.skullerspawnegg": "Spawn-egg of the MIGHTY Ꮥ₭∪ŁŁ∑℟",
 
   "block.coolmod.compressed_trash": "Compressed trash",
   "block.coolmod.radiotrashblock": "Radioactive trash block",
@@ -21,9 +21,14 @@
   "itemGroup.coolmodtab": "cool tab",
 
   "entity.minecraft.villager.coolmod.trashmaster": "Master of the trash",
+  "entity.coolmod.skuller": "The MIGHTY Ꮥ₭∪ŁŁ∑℟",
 
   "key.category.coolmod.coolmod": "Coolmod",
   "key.coolmod.test": "Just a test key",
-  "key.coolmod.drink": "Drink,"
+  "key.coolmod.drink": "Drink,",
+
+  "coolmod.tooltip.liquid.amount.with.capacity": "%s / %s mB",
+  "coolmod.tooltip.liquid.amount": "%s mB"
+
 
 }

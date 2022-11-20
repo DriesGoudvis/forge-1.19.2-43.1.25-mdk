@@ -3,6 +3,7 @@ package net.dries008.coolmod.recipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.dries008.coolmod.CoolMod;
+import net.dries008.coolmod.util.FluidJSONUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -11,18 +12,21 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 
 public class PrecisionOperationTableRecipe implements Recipe<SimpleContainer> {
     private final ResourceLocation id;
     private final ItemStack output;
     private final NonNullList<Ingredient> recipeItems;
+    private final FluidStack fluidStack;
 
     public PrecisionOperationTableRecipe(ResourceLocation id, ItemStack output,
-                                         NonNullList<Ingredient> recipeItems){
+                                         NonNullList<Ingredient> recipeItems,FluidStack fluidStack){
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
+        this.fluidStack = fluidStack;
     }
 
 
@@ -34,6 +38,10 @@ public class PrecisionOperationTableRecipe implements Recipe<SimpleContainer> {
 
 
         return recipeItems.get(0).test(pContainer.getItem(1));
+    }
+
+    public FluidStack getFluid(){
+        return fluidStack;
     }
 
     @Override
@@ -89,29 +97,32 @@ public class PrecisionOperationTableRecipe implements Recipe<SimpleContainer> {
 
             JsonArray ingredients = GsonHelper.getAsJsonArray(pSerializedRecipe, "ingredients");
             NonNullList<Ingredient> inputs = NonNullList.withSize(1, Ingredient.EMPTY);
+            FluidStack fluid = FluidJSONUtil.readFluid(pSerializedRecipe.get("fluid").getAsJsonObject());
 
             for (int i = 0; i<inputs.size(); i++){
                 inputs.set(i, Ingredient.fromJson(ingredients.get(i)));
             }
 
-            return new PrecisionOperationTableRecipe(pRecipeId, output, inputs);
+            return new PrecisionOperationTableRecipe(pRecipeId, output, inputs, fluid);
         }
 
         @Override
         public @Nullable PrecisionOperationTableRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
             NonNullList<Ingredient> inputs = NonNullList.withSize(pBuffer.readInt(), Ingredient.EMPTY);
+            FluidStack fluid = pBuffer.readFluidStack();
 
             for (int i = 0; i < inputs.size(); i++){
                 inputs.set(i, Ingredient.fromNetwork(pBuffer));
             }
 
             ItemStack output = pBuffer.readItem();
-            return new PrecisionOperationTableRecipe(pRecipeId, output, inputs);
+            return new PrecisionOperationTableRecipe(pRecipeId, output, inputs, fluid);
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf pBuffer, PrecisionOperationTableRecipe pRecipe) {
             pBuffer.writeInt(pRecipe.getIngredients().size());
+            pBuffer.writeFluidStack(pRecipe.fluidStack);
 
             for (Ingredient ing : pRecipe.getIngredients()){
                 ing.toNetwork(pBuffer);

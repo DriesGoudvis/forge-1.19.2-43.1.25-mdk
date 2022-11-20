@@ -1,10 +1,7 @@
 package net.dries008.coolmod.networking;
 
 import net.dries008.coolmod.CoolMod;
-import net.dries008.coolmod.networking.packet.DrinkWaterC2S;
-import net.dries008.coolmod.networking.packet.EnergyDataSyncS2C;
-import net.dries008.coolmod.networking.packet.ExampleC2SPacket;
-import net.dries008.coolmod.networking.packet.ThirstDataSyncS2C;
+import net.dries008.coolmod.networking.packet.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
@@ -52,6 +49,18 @@ public class ModMessage {
                 .decoder(EnergyDataSyncS2C::new)
                 .encoder(EnergyDataSyncS2C::toBytes)
                 .consumerMainThread(EnergyDataSyncS2C::handle)
+                .add();
+
+        net.messageBuilder(FluidDataSyncS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(FluidDataSyncS2C::new)
+                .encoder(FluidDataSyncS2C::toBytes)
+                .consumerMainThread(FluidDataSyncS2C::handle)
+                .add();
+
+        net.messageBuilder(ItemStackSyncS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(ItemStackSyncS2C::new)
+                .encoder(ItemStackSyncS2C::toBytes)
+                .consumerMainThread(ItemStackSyncS2C::handle)
                 .add();
 
     }

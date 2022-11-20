@@ -4,12 +4,15 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.dries008.coolmod.CoolMod;
 import net.dries008.coolmod.screen.renderer.EnergyInfoArea;
+import net.dries008.coolmod.screen.renderer.FluidTankRenderer;
 import net.dries008.coolmod.util.MouseUtil;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Optional;
 
@@ -17,6 +20,7 @@ public class PrecisionOperationTableScreen extends AbstractContainerScreen<Preci
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(CoolMod.MOD_ID, "textures/gui/precision_operation_table_gui.png");
     private EnergyInfoArea energyInfoArea;
+    private FluidTankRenderer renderer;
 
 
     public PrecisionOperationTableScreen(PrecisionOperationTableMenu menu, Inventory inventory, Component component) {
@@ -27,6 +31,11 @@ public class PrecisionOperationTableScreen extends AbstractContainerScreen<Preci
     protected void init() {
         super.init();
         assignEnergyInfoArea();
+        assignFluidRenderer();
+    }
+
+    private void assignFluidRenderer() {
+        renderer = new FluidTankRenderer(64000, true, 16, 61);
     }
 
     private void assignEnergyInfoArea() {
@@ -41,6 +50,14 @@ public class PrecisionOperationTableScreen extends AbstractContainerScreen<Preci
         int y = (height - imageHeight) / 2;
 
         renderEnergyAreaTooltips(pPoseStack, pMouseX, pMouseY, x, y);
+        renderFLuidAreaTooltips(pPoseStack, pMouseX, pMouseY, x, y);
+    }
+
+    private void renderFLuidAreaTooltips(PoseStack pPoseStack, int pMouseX, int pMouseY, int x, int y) {
+        if(isMouseAboveArea(pMouseX, pMouseY, x, y, 55, 15)){
+            renderTooltip(pPoseStack, renderer.getTooltip(menu.getFluidStack(), TooltipFlag.Default.NORMAL),
+                    Optional.empty(), pMouseX - x, pMouseY - y);
+        }
     }
 
     private void renderEnergyAreaTooltips(PoseStack pPoseStack, int pMouseX, int pMouseY, int x, int y) {
@@ -59,8 +76,11 @@ public class PrecisionOperationTableScreen extends AbstractContainerScreen<Preci
         int y = (height - imageHeight) / 2;
 
         this.blit(stack, x, y, 0,0,imageWidth,  imageHeight);
+
         renderProgressArrow(stack, x, y);
         energyInfoArea.draw(stack);
+        //the x + .. and y + .. is just the coords of the left upperst pixel
+        renderer.render(stack, x + 55, y + 15, menu.getFluidStack());
     }
 
     //draws the progress bar
@@ -77,6 +97,9 @@ public class PrecisionOperationTableScreen extends AbstractContainerScreen<Preci
         renderBackground(stack);
         super.render(stack, mouseX, mouseY, delta);
         renderTooltip(stack, mouseX, mouseY);
+    }
+    private boolean isMouseAboveArea(int pMouseX, int pMouseY, int x, int y, int offsetX, int offsetY) {
+        return MouseUtil.isMouseOver(pMouseX, pMouseY, x + offsetX, y + offsetY, renderer.getWidth(), renderer.getHeight());
     }
 
     private boolean isMouseAboveArea(int pMouseX, int pMouseY, int x, int y, int offsetX, int offsetY,int width, int height){

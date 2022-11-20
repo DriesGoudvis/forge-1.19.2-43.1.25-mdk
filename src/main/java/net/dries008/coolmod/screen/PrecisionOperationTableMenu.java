@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +21,7 @@ public class PrecisionOperationTableMenu extends AbstractContainerMenu {
     public final PrecisionOperationTableEntity blockEntity;
     private final Level level;
     private final ContainerData data;
+    private FluidStack fluidStack;
 
     public PrecisionOperationTableMenu(int id, Inventory inv, FriendlyByteBuf extraData){
         //the 2 has to match the amount of data in PrecisionOperationTableEntity line 68
@@ -33,6 +35,7 @@ public class PrecisionOperationTableMenu extends AbstractContainerMenu {
         blockEntity = (PrecisionOperationTableEntity) entity;
         this.level = inv.player.level;
         this.data = data;
+        this.fluidStack = blockEntity.getFluidStack();
 
         addPlayerInventory(inv);
         addPlayerHotbar(inv);
@@ -52,6 +55,14 @@ public class PrecisionOperationTableMenu extends AbstractContainerMenu {
 
     public boolean isCrafting(){
         return data.get(0) > 0;
+    }
+
+    public void setFluid(FluidStack fluidStack) {
+        this.fluidStack = fluidStack;
+    }
+
+    public FluidStack getFluidStack(){
+        return fluidStack;
     }
 
     public PrecisionOperationTableEntity getBlockEntity() {

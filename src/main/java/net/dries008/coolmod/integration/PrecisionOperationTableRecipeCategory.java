@@ -1,6 +1,7 @@
 package net.dries008.coolmod.integration;
 
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -14,6 +15,8 @@ import net.dries008.coolmod.recipe.PrecisionOperationTableRecipe;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.List;
 
 public class PrecisionOperationTableRecipeCategory implements IRecipeCategory<PrecisionOperationTableRecipe> {
     public final static ResourceLocation UID = new ResourceLocation(CoolMod.MOD_ID, "precision_operation");
@@ -51,6 +54,9 @@ public class PrecisionOperationTableRecipeCategory implements IRecipeCategory<Pr
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PrecisionOperationTableRecipe recipe, IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 86, 15).addIngredients(recipe.getIngredients().get(0));
+        builder.addSlot(RecipeIngredientRole.INPUT, 55, 15)
+                        .addIngredients(ForgeTypes.FLUID_STACK, List.of(recipe.getFluid()))
+                        .setFluidRenderer(64000, false, 16, 61);
 
         builder.addSlot(RecipeIngredientRole.OUTPUT, 86, 60).addItemStack(recipe.getResultItem());
     }

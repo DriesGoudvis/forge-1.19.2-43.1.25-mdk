@@ -5,8 +5,11 @@
       "item": "coolmod:radiotrash"
     }
   ],
+  "fluid": {
+    "FluidName": "coolmod:p_water_fluid",
+    "Amount": 500
+  },
   "output": {
     "item": "coolmod:radiohealcropseeds"
-
   }
 }

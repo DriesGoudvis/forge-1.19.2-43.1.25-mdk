@@ -3,6 +3,8 @@ package net.dries008.coolmod;
 import com.mojang.logging.LogUtils;
 import net.dries008.coolmod.block.ModBlocks;
 import net.dries008.coolmod.block.entity.ModBlockEntities;
+import net.dries008.coolmod.entity.ModEntityTypes;
+import net.dries008.coolmod.entity.client.SkullerRenderer;
 import net.dries008.coolmod.fluid.ModFluidTypes;
 import net.dries008.coolmod.fluid.ModFluids;
 import net.dries008.coolmod.item.ModItems;
@@ -17,6 +19,7 @@ import net.dries008.coolmod.world.feature.ModPlacedFeatures;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -25,6 +28,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
+import software.bernie.geckolib3.GeckoLib;
 
 @Mod(CoolMod.MOD_ID)
 public class CoolMod
@@ -52,6 +56,9 @@ public class CoolMod
         ModMenuTypes.register(modEventBus);
 
         ModRecipes.register(modEventBus);
+        ModEntityTypes.register(modEventBus);
+
+        GeckoLib.initialize();
 
         modEventBus.addListener(this::commonSetup);
 
@@ -79,6 +86,8 @@ public class CoolMod
             ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_P_WATER.get(), RenderType.translucent());
 
             MenuScreens.register(ModMenuTypes.PRECISION_OPERATION_TABLE_MENU.get(), PrecisionOperationTableScreen::new);
+
+            EntityRenderers.register(ModEntityTypes.SKULLER.get(), SkullerRenderer::new);
         }
     }
 }

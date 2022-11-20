@@ -2,8 +2,6 @@
   "replace": false,
   "values": [
     "coolmod:radiotrashblock",
-    "coolmod:jumpblock",
-    "coolmod:superactivetrash",
-    "coolmod:compressed_trash"
+    "coolmod:jumpblock"
   ]
 }

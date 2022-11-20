@@ -3,9 +3,12 @@ package net.dries008.coolmod.block.entity;
 import net.dries008.coolmod.CoolMod;
 import net.dries008.coolmod.block.ModBlocks;
 import net.dries008.coolmod.block.custom.PrecisionOperationTable;
+import net.dries008.coolmod.fluid.ModFluids;
 import net.dries008.coolmod.item.ModItems;
 import net.dries008.coolmod.networking.ModMessage;
 import net.dries008.coolmod.networking.packet.EnergyDataSyncS2C;
+import net.dries008.coolmod.networking.packet.FluidDataSyncS2C;
+import net.dries008.coolmod.networking.packet.ItemStackSyncS2C;
 import net.dries008.coolmod.recipe.PrecisionOperationTableRecipe;
 import net.dries008.coolmod.screen.PrecisionOperationTableMenu;
 import net.dries008.coolmod.util.ModEnergyStorage;
@@ -27,10 +30,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -47,13 +54,16 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
+            if(!level.isClientSide){
+                ModMessage.sentToClients(new ItemStackSyncS2C(this, worldPosition));
+            }
         }
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             return switch (slot){
-                case 0 -> stack.getItem() == ModItems.RADIOHEALCROPEAT  .get();
-                case 1 -> stack.getItem() == ModItems.RADIOTRASH.get();
+                case 0 -> stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent();
+                case 1 -> true;
                 case 2 -> false;
                 default -> super.isItemValid(slot, stack);
 
@@ -70,6 +80,29 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
     };
     private static final int ENERGY_REQ = 32;
 
+    private final FluidTank FLUID_TANK = new FluidTank(64000){
+        @Override
+        protected void onContentsChanged() {
+            setChanged();
+            if(!level.isClientSide){
+                ModMessage.sentToClients(new FluidDataSyncS2C(this.fluid, worldPosition));
+            }
+        }
+
+        @Override
+        public boolean isFluidValid(FluidStack stack) {
+            return stack.getFluid() == Fluids.WATER || stack.getFluid() == ModFluids.SOURCE_P_WATER.get();
+        }
+    };
+
+    public void setFluid(FluidStack stack){
+        this.FLUID_TANK.setFluid(stack);
+    }
+
+    public FluidStack getFluidStack(){
+        return this.FLUID_TANK.getFluid();
+    }
+
     public ItemStack getRenderStack() {
         ItemStack stack;
         if(!itemHandler.getStackInSlot(2).isEmpty()){
@@ -78,6 +111,12 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
             stack = itemHandler.getStackInSlot(1);
         }
         return stack;
+    }
+
+    public void setHandler(ItemStackHandler itemStackHandler) {
+        for(int i = 0; i < itemStackHandler.getSlots(); i++){
+            itemHandler.setStackInSlot(i, itemStackHandler.getStackInSlot(i));
+        }
     }
 
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
@@ -92,6 +131,7 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
                             (index, stack) -> itemHandler.isItemValid(0, stack) || itemHandler.isItemValid(1, stack))));
 
     private LazyOptional<IEnergyStorage> lazyEnergyHandler = LazyOptional.empty();
+    private LazyOptional<IFluidHandler> lazyFluidHandler = LazyOptional.empty();
 
     protected final ContainerData data;
     private int progress = 0;
@@ -137,6 +177,8 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+        ModMessage.sentToClients(new FluidDataSyncS2C(this.getFluidStack(), worldPosition));
+        ModMessage.sentToClients(new EnergyDataSyncS2C(this.ENERGY_STORAGE.getEnergyStored(), worldPosition));
         return new PrecisionOperationTableMenu(id, inventory, this, this.data);
     }
 
@@ -151,11 +193,11 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
     //??
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+        //energy from all sides
         if(cap == ForgeCapabilities.ENERGY){
             return lazyEnergyHandler.cast();
         }
-
-
+        //make the item input/output side item specific
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
             if(side == null) {
                 return lazyItemHandler.cast();
@@ -177,6 +219,11 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
             }
         }
 
+        //fluids from all sides
+        if(cap==ForgeCapabilities.FLUID_HANDLER){
+            return lazyFluidHandler.cast();
+        }
+
         return super.getCapability(cap, side);
     }
 
@@ -186,6 +233,7 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
         super.onLoad();
         lazyItemHandler = LazyOptional.of(()->itemHandler);
         lazyEnergyHandler = LazyOptional.of(() -> ENERGY_STORAGE);
+        lazyFluidHandler = LazyOptional.of(() -> FLUID_TANK);
     }
 
     //uhmmmmmm, makes the block invalid?
@@ -194,6 +242,7 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
         super.invalidateCaps();
         lazyItemHandler.invalidate();
         lazyEnergyHandler.invalidate();
+        lazyFluidHandler.invalidate();
     }
 
     //saves the inventory
@@ -202,6 +251,7 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
         nbt.put("inventory", itemHandler.serializeNBT());
         nbt.putInt("precision_operation_table.progress", this.progress);
         nbt.putInt("precision_operation_table.energy", ENERGY_STORAGE.getEnergyStored());
+        nbt = FLUID_TANK.writeToNBT(nbt);
 
         super.saveAdditional(nbt);
     }
@@ -213,6 +263,7 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
         itemHandler.deserializeNBT(nbt.getCompound("inventory"));
         progress = nbt.getInt("precision_operation_table.progress");
         ENERGY_STORAGE.setEnergy(nbt.getInt("precision_operation_table.energy"));
+        FLUID_TANK.readFromNBT(nbt);
     }
 
 
@@ -249,7 +300,33 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
             setChanged(level, blockPos, blockState);
         }
 
+        if(hasFluidItemInSourceSlot(pEntity)){
+            transferItemFluidToFluidTank(pEntity);
+        }
+    }
 
+
+    private static void transferItemFluidToFluidTank(PrecisionOperationTableEntity pEntity) {
+        pEntity.itemHandler.getStackInSlot(0).getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).ifPresent(handler -> {
+            int drainAmount = Math.min(pEntity.FLUID_TANK.getSpace(), 1000);
+
+            FluidStack stack = handler.drain(drainAmount, IFluidHandler.FluidAction.SIMULATE);
+            if(pEntity.FLUID_TANK.isFluidValid(stack)){
+                stack = handler.drain(drainAmount, IFluidHandler.FluidAction.EXECUTE);
+                fillTankWithFluid(pEntity, stack, handler.getContainer());
+            }
+        });
+    }
+
+    private static void fillTankWithFluid(PrecisionOperationTableEntity pEntity, FluidStack stack, ItemStack container) {
+        pEntity.FLUID_TANK.fill(stack, IFluidHandler.FluidAction.EXECUTE);
+
+        pEntity.itemHandler.extractItem(0, 1, false);
+        pEntity.itemHandler.insertItem(0, container, false);
+    }
+
+    private static boolean hasFluidItemInSourceSlot(PrecisionOperationTableEntity pEntity) {
+        return pEntity.itemHandler.getStackInSlot(0).getCount() > 0;
     }
 
     private static void extractEnergy(PrecisionOperationTableEntity pEntity) {
@@ -280,12 +357,12 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
 
 
         if(hasRecipe(pEntity)){
+            pEntity.FLUID_TANK.drain(recipe.get().getFluid().getAmount(), IFluidHandler.FluidAction.EXECUTE);
             //extracts out item slot 1, 1 item, and ite actually happens (it doesn't simulate it)
             pEntity.itemHandler.extractItem(1,1,false);
-
-                pEntity.itemHandler.setStackInSlot(2, new ItemStack(recipe.get().getResultItem().getItem(),
+            pEntity.itemHandler.setStackInSlot(2, new ItemStack(recipe.get().getResultItem().getItem(),
                         pEntity.itemHandler.getStackInSlot(2).getCount() + 1));
-                pEntity.resetProgress();
+            pEntity.resetProgress();
         }
     }
 
@@ -300,9 +377,20 @@ public class PrecisionOperationTableEntity extends BlockEntity implements MenuPr
                 .getRecipeFor(PrecisionOperationTableRecipe.Type.INSTANCE, inventory, level);
 
         return recipe.isPresent() && canInsertAmountIntoOutputSlot(inventory) &&
-                canInsertItemIntoOutputSlot(inventory, recipe.get().getResultItem());
+                canInsertItemIntoOutputSlot(inventory, recipe.get().getResultItem())
+                && hasCorrectFluidIntTank(pEntity, recipe)
+                && hasCorrectFluidAmount(pEntity, recipe);
 
 
+    }
+
+    //returns true if the amount of fluid in tank is bigger or equal the fluid needed for the recipe
+    private static boolean hasCorrectFluidAmount(PrecisionOperationTableEntity pEntity, Optional<PrecisionOperationTableRecipe> recipe) {
+        return pEntity.FLUID_TANK.getFluidAmount() >= recipe.get().getFluid().getAmount();
+    }
+
+    private static boolean hasCorrectFluidIntTank(PrecisionOperationTableEntity pEntity, Optional<PrecisionOperationTableRecipe> recipe) {
+        return recipe.get().getFluid().equals(pEntity.FLUID_TANK.getFluid());
     }
 
     private static boolean canInsertItemIntoOutputSlot(SimpleContainer inventory, ItemStack itemStack) {
